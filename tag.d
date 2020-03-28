@@ -12,14 +12,11 @@ int main(string[] argv) {
 
   if (argv.length == 1) return 1;
 
-  import std.stdio : put = writefln;
   import std.array : join, split;
 
   const string program = argv[0].split('/')[$-1..$][0];
-
   string name;
   int offset;
-
   if (program == "tag") {
     name = argv[1];
     offset = 2;
@@ -28,19 +25,27 @@ int main(string[] argv) {
     offset = 1;
   }
 
-  const string msg = argv[offset..$].join(" ");
-  Tint tint = Tint(name).bold();
-  int rv = 0;
+  const string message = argv[offset..$].join(" ");
+  string separator = ":";
+  Tint tinted = Tint(name).bold();
 
   switch (name) {
-    case "err":  tint.red();     rv = 1; break;
-    case "log":  tint.gray();            break;
-    case "info": tint.yellow();          break;
-    case "warn": tint.magenta(); rv = 1; break;
-    default: break;
+    case "err":  tinted.red();     break;
+    case "log":  tinted.gray();    break;
+    case "info": tinted.yellow();  break;
+    case "warn": tinted.magenta(); break;
+    case "oops":
+      tinted.set("Oops!")
+        .black().on_yellow()
+        .italic().bold();
+      separator = "";
+      break;
+    default: tinted.random(); break;
   }
-  put("  %s: %s", tint, msg);
 
-  return rv;
+  import std.stdio : put = writefln;
+  put("  %s%s  %s", tinted, separator, message);
+
+  return 0;
 
 }
